@@ -87,7 +87,7 @@ const cloud = c => '<svg class="cld ' + c + '" viewBox="0 0 400 100" aria-hidden
 const gull = c => '<svg class="gull ' + c + '" viewBox="0 0 24 10" aria-hidden="true"><path d="M1 8Q6 0 12 6Q18 0 23 8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>';
 const SCENE = '<div class="scn"><div class="sky"></div><div class="sun"></div><div class="stars fx"></div>' + cloud("c1") + cloud("c2") + '<div class="haze"></div><div class="sea"></div><div class="gli fx"></div>' + gull("g1") +
  WV[0] + WV[1] + '<div class="wake fx"><i></i><i style="animation-delay:-1.2s"></i></div><div class="sb" id="shipbox"></div><div class="spr fx"><i></i><i style="animation-delay:-.5s"></i><i style="animation-delay:-1s"></i></div>' + WV[2] + WV[3] +
- '<div class="rain fx" style="background-image:' + rainT + '"></div><div class="flash fx"></div></div><img id="face" alt="" referrerpolicy="no-referrer" decoding="async">';
+ '<div class="rain fx" style="background-image:' + rainT + '"></div><div class="flash fx"></div></div>';
 
 let runes = ""; for (let i = 0; i < 10; i++) runes += '<div class="rune" data-k="' + (i % 5) + '" style="--a:' + i * 36 + 'deg"><div class="rf">' + ICO(i % 5) + '</div></div>';
 let fall = ""; for (let i = 0; i < 6; i++) fall += '<div class="fr" style="left:' + (8 + i * 16) + '%;animation-duration:' + (12 + (i * 7) % 6) + 's;animation-delay:-' + ((i * 5) % 14) + 's">' + ICO(i % 5) + '</div>';
@@ -102,6 +102,7 @@ const CSS = `
 button{font:inherit;color:inherit}
 .hud{position:fixed;left:7%;top:calc(50% + var(--py)*1vmin);width:var(--size);height:var(--size);transform:translate(-42%,-50%) scale(var(--s));z-index:2;touch-action:none;opacity:var(--op);transition:transform .5s var(--ease)}
 .flip .hud{left:auto;right:7%;transform:translate(42%,-50%) scale(var(--s))}
+.hud{pointer-events:none}.ring,.portrait,.rune{pointer-events:auto}.through .ring,.through .portrait,.through .rune{pointer-events:none}
 .idle .hud{opacity:calc(var(--op)*.2)}.through .hud{pointer-events:none}
 .live .hud{transition:opacity .5s,transform .5s var(--ease)}.pre .hud{pointer-events:none}.pre .l{opacity:.02}.hid .hud{visibility:hidden}
 .l{position:absolute;inset:0;pointer-events:none}
@@ -156,7 +157,7 @@ button{font:inherit;color:inherit}
 .rain{left:0;right:0;top:-80px;bottom:0;opacity:.55;background-size:60px 80px}.live2 .rain{animation:rn .5s linear infinite}@keyframes rn{to{transform:translate3d(0,80px,0)}}
 .flash{top:0;bottom:0;background:radial-gradient(circle at 72% 20%,rgba(225,238,255,.95),rgba(160,190,230,.3) 60%,transparent);opacity:0}.live2 .flash{animation:zap 9s infinite}@keyframes zap{0%,90%,100%{opacity:0}91%{opacity:.9}92%{opacity:.1}93%{opacity:.7}96%{opacity:0}}
 .no-wx .rain,.no-wx .flash,.no-wx .bolt,.no-wx .gull,.no-wx .spr,.no-wx .wake{display:none}
-#face{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.has-img #face{display:block}.has-img .scn{display:none}
+#face{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;z-index:1}.has-img #face{opacity:1}.has-img .scn{display:none}
 .portrait::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(circle,transparent 58%,rgba(0,12,30,.5)),linear-gradient(180deg,rgba(255,255,255,.12),transparent 30%)}
 .shine{position:absolute;top:-20%;left:0;width:22%;height:140%;z-index:3;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:translateX(-200%) skewX(-20deg);pointer-events:none}
 .live .shine{animation:sweep 8s ease-in-out infinite 2s}@keyframes sweep{0%{transform:translateX(-200%) skewX(-20deg)}50%,100%{transform:translateX(600%) skewX(-20deg)}}
@@ -189,6 +190,15 @@ button{font:inherit;color:inherit}
 .gli,.stars,.flash,.fr{will-change:transform,opacity}
 .eco .l *{will-change:auto!important}
 .rauto{position:absolute;inset:0;will-change:transform}.live2 .rauto{animation:cw calc(16s/var(--gs)) linear infinite reverse}.no-auto .rauto{animation-play-state:paused}
+.scrolling .l *:not(.hand),.scrolling .fr{animation-play-state:paused!important}
+.btn.on{background:rgba(59,184,240,.38)}
+:is(.q-mid,.q-low,.lowfx) :is(.c1,.c2,.stars,.gli,.wake i,.spr i){animation:none!important}
+:is(.q-mid,.q-low,.lowfx) :is(.fall,.gull,.rain,.flash,.wake,.spr){display:none}
+:is(.q-low,.lowfx) :is(.flag,.cs,.ticks){animation:none!important}
+:is(.q-low,.lowfx) .cx.r{display:none}
+:is(.q-mid,.q-low,.lowfx) :is(.cld,.gli,.stars){will-change:auto!important}
+:is(.q-low,.lowfx) :is(.ticks,.cs,.flag){will-change:auto!important}
+.settled .l{will-change:auto}
 .lowfx .c2,.lowfx .gli,.lowfx .cx.r,.lowfx .rain,.lowfx .flash,.lowfx .gull,.lowfx .spr,.lowfx .wake,.lowfx .stars,.lowfx .fall{display:none}
 .fall{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .8s .5s,visibility 0s .5s}
 .go .fall{opacity:1;visibility:visible}.out .fall{opacity:0;transition:opacity .4s}.hide-fall .fall,.eco .fall{display:none}
@@ -204,7 +214,7 @@ button{font:inherit;color:inherit}
 .sec{display:flex;flex-direction:column;gap:9px}.lb{font-size:13px;color:var(--c1)}
 .th{padding:10px 12px;border-radius:12px;border:1px solid var(--c1);background:rgba(59,184,240,.08);cursor:pointer;text-align:left;font-size:14px}.th b{display:block;font-size:15px}.th small{color:#8fb4cc;font-size:12px}.th.on{background:rgba(59,184,240,.28)}
 .cols{display:flex;flex-wrap:wrap;gap:10px}.cols button{width:32px;height:32px;border-radius:50%;border:2px solid transparent;cursor:pointer}.cols button.on{border-color:#fff;transform:scale(1.15)}
-.row{display:flex;gap:8px}.btn{flex:1;padding:9px 6px;border-radius:10px;border:1px solid var(--c1);background:rgba(59,184,240,.1);cursor:pointer;font-size:14px;transition:transform .3s var(--ease)}.btn:active{transform:scale(.95)}
+.row{display:flex;gap:8px}.btn{flex:1;padding:9px 6px;border-radius:10px;border:1px solid var(--c1);background:rgba(59,184,240,.1);cursor:pointer;font-size:14px;transition:transform .3s var(--ease)}.btn:active{transform:scale(.95)}.btn.on{background:rgba(59,184,240,.38)}
 .rg{display:flex;flex-direction:column;gap:6px;font-size:14px}.rg span{display:flex;justify-content:space-between}.rg i{font-style:normal;color:var(--c1)}
 input[type=range]{width:100%;accent-color:var(--c1)}
 input.hue{-webkit-appearance:none;appearance:none;height:12px;border-radius:8px;background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
@@ -223,9 +233,9 @@ const TPL = '<div class="root pre t1" id="root"><div class="fall" id="fall" aria
  LAY(0, .34, 0, .9, '<svg class="gr" viewBox="0 0 1000 1000" aria-hidden="true">' + GEAR + '</svg>') + LAY(.04, .3, -25, .85, '<div class="gear">' + BODY + '</div>') + LAY(.08, .26, 20, .92, '<svg class="hndl" viewBox="0 0 1000 1000" aria-hidden="true">' + HANDLES + '</svg><svg class="chn" viewBox="0 0 1000 1000" aria-hidden="true">' + CHAIN + '</svg><svg class="wtr" viewBox="0 0 1000 1000" aria-hidden="true">' + WT + WT2 + '</svg>') +
  LAY(.12, .22, 30, .9, '<svg class="ticks" viewBox="0 0 1000 1000" aria-hidden="true">' + tk + '</svg>') +
  LAY(.16, .18, -40, .88, '<div class="rotor" id="rotor"><div class="rauto"><div class="ring"></div>' + runes + '</div></div>') +
-  LAY(.24, .1, 0, .8, '<div class="portrait" id="portrait">' + SCENE + '<svg class="ckf" viewBox="0 0 1000 1000" aria-hidden="true">' + ck + '</svg><div class="hand h" id="h-hr"></div><div class="hand m" id="h-min"></div><div class="hand s" id="h-sec"></div><div class="cap"></div><div class="date" id="date"></div></div>') +
+  LAY(.24, .1, 0, .8, '<div class="portrait" id="portrait"><img id="face" alt="" referrerpolicy="no-referrer" decoding="async"><svg class="ckf" viewBox="0 0 1000 1000" aria-hidden="true">' + ck + '</svg><div class="hand h" id="h-hr"></div><div class="hand m" id="h-min"></div><div class="hand s" id="h-sec"></div><div class="cap"></div><div class="date" id="date"></div></div>') +
  LAY(.28, .06, 0, .9, ACC) + LAY(.31, .03, 0, .92, '<div class="cx"><div class="cs"></div></div><div class="cx r"><div class="cs"></div></div>', "xc") +
- LAY(.34, 0, 0, .95, '<svg class="arc b" viewBox="0 0 1000 1000" aria-hidden="true"><defs><path id="arcB" d="M112 500A388 388 0 0 0 888 500"/><path id="arcT" d="M130 500A370 370 0 0 1 870 500"/></defs><text><textPath href="#arcB" startOffset="50%" text-anchor="middle"><tspan id="st-bat">--</tspan><tspan fill-opacity=".6"> · </tspan><tspan id="st-fps">--</tspan><tspan> fps · </tspan><tspan id="st-ping">--</tspan></textPath></text></svg><svg class="arc t" viewBox="0 0 1000 1000" aria-hidden="true"><text><textPath href="#arcT" startOffset="50%" text-anchor="middle"><tspan id="st-lbl">Berlayar </tspan><tspan id="st-time">0:00:00</tspan></textPath></text></svg>') +
+ LAY(.34, 0, 0, .95, '<svg class="arc b" viewBox="0 0 1000 1000" aria-hidden="true"><defs><path id="arcB" d="M112 500A388 388 0 0 0 888 500"/><path id="arcT" d="M130 500A370 370 0 0 1 870 500"/></defs><text><textPath href="#arcB" startOffset="50%" text-anchor="middle"><tspan id="st-bat">--</tspan><tspan fill-opacity=".6"> · </tspan><tspan id="st-fps">--</tspan><tspan> fps · </tspan><tspan id="st-ping">--</tspan></textPath></text></svg><svg class="arc t" viewBox="0 0 1000 1000" aria-hidden="true"><text><textPath href="#arcT" startOffset="50%" text-anchor="middle"><tspan id="st-lbl">Berlayar </tspan><tspan id="st-time">0:00</tspan></textPath></text></svg>') +
  '</div><div class="dock"><button class="fb" id="btn-hud" aria-label="Tampilkan atau sembunyikan HUD"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></button><button class="fb" id="fab" aria-label="Pengaturan HUD"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5" fill="currentColor"/><circle cx="15" cy="17" r="2.5" fill="currentColor"/></svg></button></div><aside class="panel" id="panel"></aside><div class="toast" id="toast" role="status"></div><input type="file" id="file" accept="image/*" hidden></div>';
 
 /* ---------- mount ---------- */
@@ -245,7 +255,7 @@ document.head.appendChild(hs);
 /* ---------- pengaturan ---------- */
 const PRESETS = [["Biru laut", "#3bb8f0"], ["Biru samudra", "#2f7bff"], ["Tosca laguna", "#14e0d0"], ["Biru langit", "#7cc8ff"], ["Emas bajak laut", "#e0b24a"], ["Merah darah", "#ff5a4a"], ["Hijau lumut", "#4dff9a"], ["Busa putih", "#eaf4ff"]];
 const TH = [[1, "Samudra Biru", "Siang cerah, kapal layar putih di laut biru", "#3bb8f0", "#9be7ff"], [2, "Voyage", "Senja keemasan, kapal layar tinggi bergaya klasik", "#f2a65a", "#ffe3b0"], [3, "Black Flag", "Malam badai, kapal bajak laut berlayar hitam", "#e0b24a", "#ff6b5a"]];
-const DEF = {main: "#3bb8f0", clk: "#ffffff", sec: "#9be7ff", s: 1, op: 1, gs: 1, py: 0, ay: 0, as: 1, acc: true, date: true, clock: true, hidden: false, lite: true, stats: true, auto: true, eco: false, through: false, idle: false, haptic: true, flip: false, fall: true, wx: true, adapt: true, theme: 1, alert: true, brk: false, bi: 45, wake: false};
+const DEF = {main: "#3bb8f0", clk: "#ffffff", sec: "#9be7ff", s: 1, op: 1, gs: 1, py: 0, ay: 0, as: 1, acc: true, date: true, clock: true, hidden: false, lite: true, stats: true, auto: true, eco: false, through: false, idle: false, haptic: true, flip: false, fall: true, wx: true, adapt: true, q: 0, theme: 1, alert: true, brk: false, bi: 45, wake: false};
 let S = Object.assign({}, DEF);
 try { Object.assign(S, JSON.parse(localStorage.getItem("hxS5") || "{}")); } catch (e) {}
 if (!/^#[0-9a-f]{6}$/i.test(S.main)) S.main = DEF.main;
@@ -253,11 +263,16 @@ const save = () => { try { localStorage.setItem("hxS5", JSON.stringify(S)); } ca
 const hexHue = h => { const r = parseInt(h.slice(1, 3), 16) / 255, g = parseInt(h.slice(3, 5), 16) / 255, b = parseInt(h.slice(5, 7), 16) / 255, m = Math.max(r, g, b), d = m - Math.min(r, g, b); if (!d) return 0; const x = m === r ? (g - b) / d + (g < b ? 6 : 0) : m === g ? (b - r) / d + 2 : (r - g) / d + 4; return Math.round(x * 60); };
 const hueHex = h => { const k = n => (n + h / 30) % 12, f = n => .5 - .5 * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))), x = v => Math.round(v * 255).toString(16).padStart(2, "0"); return "#" + x(f(0)) + x(f(8)) + x(f(4)); };
 
-/* ---------- foto opsional (kosong = pemandangan kapal) ---------- */
+/* ---------- gambar lingkaran tengah: kapal (bawaan) atau foto sendiri ---------- */
 const face = $("face"), portrait = $("portrait");
-face.addEventListener("error", () => portrait.classList.remove("has-img"));
-const setPhoto = s => { if (s) { face.src = s; portrait.classList.add("has-img"); } else { face.removeAttribute("src"); portrait.classList.remove("has-img"); } };
-(() => { let p = ""; try { p = localStorage.getItem("hxPhoto") || ""; } catch (e) {} setPhoto(p); })();
+function ensureScene() { if (!$("shipbox")) { portrait.insertAdjacentHTML("afterbegin", SCENE); Promise.resolve().then(() => { shipT = 0; apply(); }); } }
+let wantSrc = "", photoOn = false;
+face.addEventListener("load", () => { if (face.getAttribute("src")) portrait.classList.add("has-img"); });
+face.addEventListener("error", () => { portrait.classList.remove("has-img"); ensureScene(); });
+const applyPhoto = () => { portrait.classList.remove("has-img"); if (wantSrc) face.src = wantSrc; else face.removeAttribute("src"); };
+const setPhoto = s => { wantSrc = s; if (!s) ensureScene(); if (photoOn) applyPhoto(); };
+function loadPhoto() { let p = ""; try { p = localStorage.getItem("hxPhoto") || ""; } catch (e) {} setPhoto(p); }
+loadPhoto();
 $("file").addEventListener("change", e => {
   const f = e.target.files[0]; if (!f) return;
   const img = new Image(), url = URL.createObjectURL(f);
@@ -275,9 +290,9 @@ function applyNow() {
   rs.setProperty("--s", S.s); rs.setProperty("--op", S.op); rs.setProperty("--gs", Math.max(S.gs, .05)); rs.setProperty("--py", S.py); rs.setProperty("--ay", S.ay); rs.setProperty("--as", S.as);
   document.documentElement.classList.toggle("hx-lite", IS_GGMP && S.lite);
   const b = R.classList;
-  b.toggle("flip", S.flip); b.toggle("no-auto", !S.auto); if (!S.adapt) b.remove("lowfx"); b.toggle("eco", S.eco); b.toggle("through", S.through); b.toggle("no-clock", !S.clock); b.toggle("no-stats", !S.stats); b.toggle("no-wx", !S.wx); b.toggle("no-acc", !S.acc); b.toggle("no-date", !S.date); b.toggle("hide-fall", !S.fall);
+  b.toggle("flip", S.flip); b.toggle("no-auto", !S.auto); b.toggle("q-low", S.q === 0); b.toggle("q-mid", S.q === 1); b.toggle("q-high", S.q === 2); if (!S.adapt) b.remove("lowfx"); b.toggle("eco", S.eco); b.toggle("through", S.through); b.toggle("no-clock", !S.clock); b.toggle("no-stats", !S.stats); b.toggle("no-wx", !S.wx); b.toggle("no-acc", !S.acc); b.toggle("no-date", !S.date); b.toggle("hide-fall", !S.fall);
   [1, 2, 3].forEach(i => b.toggle("t" + i, S.theme === i));
-  if (shipT !== S.theme) { shipT = S.theme; $("shipbox").innerHTML = SHIP(PS[S.theme - 1]); const cc = WCOL[S.theme - 1]; WL.forEach((w, i) => { rs.setProperty("--wi" + i, wu(w[2], cc[i], w[4] ? (S.theme === 3 ? "rgba(190,215,225,.5)" : "rgba(255,255,255,.65)") : "")); rs.setProperty("--wc" + i, cc[i]); }); }
+  if (shipT !== S.theme) { shipT = S.theme; const sbx = $("shipbox"); if (sbx) sbx.innerHTML = SHIP(PS[S.theme - 1]); const cc = WCOL[S.theme - 1]; WL.forEach((w, i) => { rs.setProperty("--wi" + i, wu(w[2], cc[i], w[4] ? (S.theme === 3 ? "rgba(190,215,225,.5)" : "rgba(255,255,255,.65)") : "")); rs.setProperty("--wc" + i, cc[i]); }); }
   sr.querySelectorAll(".rune").forEach(el => { const k = +el.dataset.k; el.classList.toggle("on", (k === 0 && S.fall) || (k === 2 && S.stats) || (k === 3 && S.eco) || (k === 4 && S.auto)); });
   syncPanel(); wake(); lock();
 }
@@ -290,9 +305,9 @@ const RG = [["s", "Ukuran", 50, 130], ["op", "Transparansi", 30, 100], ["gs", "K
 const NG = [["ay", "Naik/turun aksesori", -25, 25, 1], ["py", "Posisi vertikal HUD", -30, 30, 1], ["bi", "Jeda istirahat (menit)", 15, 120, 5]];
 $("panel").innerHTML = '<div class="pt"><b>Dek Kapten</b><button class="x" data-a="close" aria-label="Tutup">✕</button></div>' +
  '<div class="sec"><span class="lb">Tema (tahan lama lingkaran untuk ganti cepat)</span>' + TH.map(t => '<button class="th" data-th="' + t[0] + '"><b>' + t[1] + '</b><small>' + t[2] + '</small></button>').join("") + '</div>' +
- '<div class="sec"><span class="lb">Warna aksen</span><div class="cols">' + PRESETS.map(p => '<button data-pc="' + p[1] + '" style="background:' + p[1] + '" aria-label="' + p[0] + '"></button>').join("") + '</div><input type="range" class="hue" min="0" max="360" data-hue aria-label="Warna"><label class="cp"><span>Warna sendiri</span><input type="color" data-c="main"></label></div>' +
+ '<div class="sec"><span class="lb">Kualitas efek (pilih Ringan jika patah-patah)</span><div class="row"><button class="btn" data-q="0">Ringan</button><button class="btn" data-q="1">Sedang</button><button class="btn" data-q="2">Penuh</button></div></div><div class="sec"><span class="lb">Warna aksen</span><div class="cols">' + PRESETS.map(p => '<button data-pc="' + p[1] + '" style="background:' + p[1] + '" aria-label="' + p[0] + '"></button>').join("") + '</div><input type="range" class="hue" min="0" max="360" data-hue aria-label="Warna"><label class="cp"><span>Warna sendiri</span><input type="color" data-c="main"></label></div>' +
  '<div class="sec"><span class="lb">Warna jam</span><label class="cp"><span>Angka dan jarum</span><input type="color" data-c="clk"></label><label class="cp"><span>Jarum detik</span><input type="color" data-c="sec"></label></div>' +
- '<div class="sec"><span class="lb">Gambar lingkaran tengah</span><div class="row"><button class="btn" data-a="photo">Pakai foto sendiri</button><button class="btn" data-a="nophoto">Pakai kapal</button></div></div>' +
+ '<div class="sec"><span class="lb">Gambar lingkaran tengah</span><div class="row"><button class="btn" data-a="photo">Foto sendiri</button><button class="btn" data-a="nophoto">Kapal</button></div></div>' +
  '<div class="sec"><span class="lb">Timer</span><div class="row"><button class="btn" data-a="t5">5m</button><button class="btn" data-a="t15">15m</button><button class="btn" data-a="t25">25m</button><button class="btn" data-a="t0">Stop</button></div><button class="btn" data-a="full" style="flex:none">Layar penuh</button></div>' +
  RG.map(r => '<label class="rg"><span>' + r[1] + ' <i id="v-' + r[0] + '"></i></span><input type="range" min="' + r[2] + '" max="' + r[3] + '" data-r="' + r[0] + '"></label>').join("") +
  NG.map(r => '<label class="rg"><span>' + r[1] + ' <i id="v-' + r[0] + '"></i></span><input type="range" min="' + r[2] + '" max="' + r[3] + '" step="' + r[4] + '" data-n="' + r[0] + '"></label>').join("") +
@@ -302,6 +317,7 @@ function syncPanel() {
   const p = $("panel");
   p.querySelectorAll("[data-pc]").forEach(b => b.classList.toggle("on", b.dataset.pc.toLowerCase() === S.main.toLowerCase()));
   p.querySelectorAll("[data-th]").forEach(b => b.classList.toggle("on", +b.dataset.th === S.theme));
+  p.querySelectorAll("[data-q]").forEach(b => b.classList.toggle("on", +b.dataset.q === S.q));
   p.querySelectorAll("[data-k]").forEach(i => { i.checked = !!S[i.dataset.k]; });
   p.querySelectorAll("[data-r]").forEach(i => { const v = Math.round(S[i.dataset.r] * 100); if (+i.value !== v) i.value = v; $("v-" + i.dataset.r).textContent = v + "%"; });
   p.querySelectorAll("[data-n]").forEach(i => { if (+i.value !== S[i.dataset.n]) i.value = S[i.dataset.n]; $("v-" + i.dataset.n).textContent = S[i.dataset.n]; });
@@ -313,11 +329,12 @@ $("panel").addEventListener("change", e => { const k = e.target.dataset.k; if (k
 function startTimer(m) { tEnd = m ? Date.now() + m * 60000 : 0; toast(m ? "Timer " + m + " menit dimulai" : "Timer dihentikan"); sailTime(true); }
 $("panel").addEventListener("click", e => {
   const pc = e.target.closest("[data-pc]"); if (pc) { set("main", pc.dataset.pc); return; }
+  const qb = e.target.closest("[data-q]"); if (qb) { set("q", +qb.dataset.q); toast(["Ringan", "Sedang", "Penuh"][+qb.dataset.q]); return; }
   const th = e.target.closest("[data-th]"); if (th) { setTheme(+th.dataset.th); return; }
   const a = e.target.closest("[data-a]"); if (!a) return; const k = a.dataset.a;
   if (k === "close") togglePanel(false);
   if (k === "photo") $("file").click();
-  if (k === "nophoto") { try { localStorage.removeItem("hxPhoto"); } catch (er) {} setPhoto(""); toast("Pemandangan kapal dipakai"); }
+  if (k === "nophoto") { try { localStorage.removeItem("hxPhoto"); } catch (er) {} loadPhoto(); toast("Pemandangan kapal dipakai"); }
   if (/^t\d+$/.test(k)) startTimer(+k.slice(1));
   if (k === "full") { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch (er) { toast("Layar penuh tidak didukung"); } }
   if (k === "reset") { S = Object.assign({}, DEF); save(); apply(); toast("Pengaturan dikembalikan"); if (R.classList.contains("hid")) showHUD(); }
@@ -337,10 +354,10 @@ function runeAction(k) {
 /* ---------- geser memutar, ketuk aksi, tahan ganti tema ---------- */
 const hud = $("hud"), rotor = $("rotor");
 let ang = 0, tgt = 0, dragging = false, lx = 0, ly = 0, lm = 0, inertia = 0, down = null;
-hud.addEventListener("pointerdown", e => { if (S.through) return; try { hud.setPointerCapture(e.pointerId); } catch (er) {} dragging = true; inertia = 0; lx = e.clientX; ly = e.clientY; lm = e.timeStamp; down = {t: e.timeStamp, el: e.target, moved: 0}; e.preventDefault(); });
+hud.addEventListener("pointerdown", e => { if (S.through) return; try { hud.setPointerCapture(e.pointerId); } catch (er) {} dragging = true; inertia = 0; kick(); lx = e.clientX; ly = e.clientY; lm = e.timeStamp; down = {t: e.timeStamp, el: e.target, moved: 0}; e.preventDefault(); });
 hud.addEventListener("pointermove", e => { if (!dragging) return; const dx = e.clientX - lx, dy = e.clientY - ly, d = dx * .75 + dy * .12, el = Math.max(8, e.timeStamp - lm); tgt += d; inertia = Math.max(-1.35, Math.min(1.35, d / el)); if (down) down.moved += Math.abs(dx) + Math.abs(dy); lx = e.clientX; ly = e.clientY; lm = e.timeStamp; e.preventDefault(); });
 function end(e) {
-  if (!dragging) return; dragging = false;
+  if (!dragging) return; dragging = false; kick();
   if (down && e.type === "pointerup" && down.moved < 10) {
     const dur = e.timeStamp - down.t, rune = down.el.closest && down.el.closest(".rune"), inP = down.el.closest && down.el.closest(".portrait");
     if (rune && dur < 450) { rune.classList.remove("tap"); void rune.offsetWidth; rune.classList.add("tap"); buzz(); runeAction(+rune.dataset.k); }
@@ -351,17 +368,29 @@ function end(e) {
 hud.addEventListener("pointerup", end); hud.addEventListener("pointercancel", end);
 
 /* ---------- loop ---------- */
-let last = performance.now(), frames = 0, fs = last, wRot = 1e9, lowN = 0;
-function frame(now) {
-  requestAnimationFrame(frame);
-  if (document.hidden || R.classList.contains("hid") || R.classList.contains("pre")) { last = now; return; }
-  if (S.eco && now - last < 30) return;
-  const dt = Math.min(34, now - last); last = now; frames++;
-  if (!dragging) { if (Math.abs(inertia) > .018) { tgt += inertia * dt; inertia *= Math.pow(.9, dt / 16); } else { inertia = 0; } }
+let last = 0, wRot = 1e9, lowN = 0, looping = false, fpsBusy = false;
+function spin(now) {
+  if (!dragging && Math.abs(inertia) <= .018 && Math.abs(tgt - ang) < .02) { looping = false; return; }
+  const dt = Math.min(34, now - (last || now - 16)); last = now;
+  if (!dragging) { if (Math.abs(inertia) > .018) { tgt += inertia * dt; inertia *= Math.pow(.9, dt / 16); } else inertia = 0; }
   ang += (tgt - ang) * (1 - Math.exp(-dt / 38));
   if (Math.abs(ang - wRot) > .02) { wRot = ang; rotor.style.transform = "rotate(" + ang.toFixed(2) + "deg)"; }
-  if (now - fs >= 3000) { const f = Math.round(frames * 1000 / (now - fs)); if (S.stats) { const el = $("st-fps"); setTxt(el, String(f)); el.setAttribute("fill", f < 25 ? "#ff6b5a" : f < 45 ? "#ffd36b" : "#7dffb0"); } if (S.adapt && !S.eco && R.classList.contains("live2") && !dragging) { if (f < 40) { if (++lowN >= 2 && !R.classList.contains("lowfx")) { R.classList.add("lowfx"); toast("Efek dikurangi otomatis agar tetap mulus"); } } else lowN = 0; } frames = 0; fs = now; }
+  requestAnimationFrame(spin);
 }
+const kick = () => { if (!looping) { looping = true; last = 0; requestAnimationFrame(spin); } };
+function sampleFps() {
+  const c = R.classList; if (fpsBusy || document.hidden || c.contains("scrolling") || !c.contains("live2") || (!S.stats && !(S.adapt && !S.eco))) return;
+  fpsBusy = true; let n = 0; const t0 = performance.now();
+  const tick = now => {
+    n++; if (now - t0 < 1000) { requestAnimationFrame(tick); return; }
+    fpsBusy = false; if (c.contains("scrolling") || dragging) return;
+    const f = Math.round(n * 1000 / (now - t0));
+    if (S.stats) { const el = $("st-fps"); setTxt(el, String(f)); el.setAttribute("fill", f < 25 ? "#ff6b5a" : f < 45 ? "#ffd36b" : "#7dffb0"); }
+    if (S.adapt && !S.eco) { if (f < 40) { if (++lowN >= 2 && !c.contains("lowfx")) { c.add("lowfx"); toast("Efek dikurangi otomatis agar tetap mulus"); } } else lowN = 0; }
+  };
+  requestAnimationFrame(tick);
+}
+setInterval(sampleFps, 5000);
 
 /* ---------- jam, tanggal, baterai, ping, timer, jaga ---------- */
 const DAYS = ["MIN", "SEN", "SEL", "RAB", "KAM", "JUM", "SAB"], MON = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGU", "SEP", "OKT", "NOV", "DES"];
@@ -382,33 +411,36 @@ const T0 = Date.now(), pad = n => String(n).padStart(2, "0");
 function sailTime(force) {
   if (tEnd) { const r = Math.ceil((tEnd - Date.now()) / 1000); if (r <= 0) { tEnd = 0; toast("Timer selesai, Kapten!", 5000); buzz([250, 100, 250, 100, 250]); } else { setTxt($("st-lbl"), "Timer "); setTxt($("st-time"), Math.floor(r / 60) + ":" + pad(r % 60)); return; } }
   if (!S.stats && !force) return; if (document.hidden) return;
-  const s = Math.floor((Date.now() - T0) / 1000); setTxt($("st-lbl"), "Berlayar "); setTxt($("st-time"), Math.floor(s / 3600) + ":" + pad(Math.floor(s / 60) % 60) + ":" + pad(s % 60));
+  const s = Math.floor((Date.now() - T0) / 1000); if (!force && !tEnd && s % 15) return; setTxt($("st-lbl"), "Berlayar "); setTxt($("st-time"), Math.floor(s / 3600) + ":" + pad(Math.floor(s / 60) % 60));
 }
 function breakCheck() { if (!S.brk || Date.now() - lastBrk < S.bi * 60000) return; lastBrk = Date.now(); toast("Ganti jaga, Kapten! Sudah " + S.bi + " menit, istirahat sebentar", 5000); buzz([200, 100, 200]); }
 window.addEventListener("offline", () => { if (S.alert) { toast("Sinyal hilang, kapal terombang-ambing", 3500); buzz([120, 60, 120]); } });
 window.addEventListener("online", () => { if (S.alert) toast("Sinyal kembali"); });
-battery(); ping(); setInterval(ping, 10000); setInterval(sailTime, 1000); setInterval(breakCheck, 20000); syncClock(); setInterval(syncClock, 60000);
+battery(); setTimeout(ping, 6000); setInterval(ping, 10000); setInterval(sailTime, 1000); setInterval(breakCheck, 20000); syncClock(); setInterval(syncClock, 60000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { syncClock(); lock(); } });
 
 /* ---------- masuk dan keluar: layer bergantian, hanya transform + opacity ---------- */
 let hudT, liveT;
 const setBtn = () => $("btn-hud").classList.toggle("off", !!S.hidden);
 function showHUD() {
-  clearTimeout(hudT); clearTimeout(liveT); R.classList.remove("pre", "hid", "out", "live", "live2", "go"); void R.offsetWidth; R.classList.add("go"); syncClock();
-  S.hidden = false; save(); setBtn(); liveT = setTimeout(() => { R.classList.add("live"); liveT = setTimeout(() => R.classList.add("live2"), 450); }, 1050);
+  clearTimeout(hudT); clearTimeout(liveT); R.classList.remove("pre", "hid", "out", "live", "live2", "settled", "go"); void R.offsetWidth; R.classList.add("go"); syncClock(); if (!photoOn) { photoOn = true; requestAnimationFrame(applyPhoto); }
+  S.hidden = false; save(); setBtn(); liveT = setTimeout(() => { R.classList.add("live"); liveT = setTimeout(() => { R.classList.add("live2"); liveT = setTimeout(() => R.classList.add("settled"), 600); }, 450); }, 1050);
 }
 function hideHUD() {
-  clearTimeout(hudT); clearTimeout(liveT); R.classList.remove("go", "live", "live2", "pre"); void R.offsetWidth; R.classList.add("out");
+  clearTimeout(hudT); clearTimeout(liveT); R.classList.remove("go", "live", "live2", "settled", "pre"); void R.offsetWidth; R.classList.add("out");
   S.hidden = true; save(); setBtn(); hudT = setTimeout(() => { R.classList.remove("out"); R.classList.add("hid"); }, 800);
 }
 $("btn-hud").addEventListener("click", () => { buzz(); S.hidden ? showHUD() : hideHUD(); });
-const ready = cb => requestAnimationFrame(() => requestAnimationFrame(() => { if (window.requestIdleCallback) requestIdleCallback(cb, {timeout: 250}); else setTimeout(cb, 0); }));
+const ready = cb => requestAnimationFrame(() => cb());
 const startIntro = () => { if (S.hidden) { R.classList.remove("pre"); R.classList.add("hid"); setBtn(); return; } showHUD(); };
 (() => {
   const dash = document.getElementById("dashboard-container"); if (!dash) { ready(startIntro); return; }
   let n = 0; const t = setInterval(() => { n++; const ok = dash.classList.contains("show-dashboard"); if (ok || n > 100) { clearInterval(t); ready(startIntro); } }, 60);
 })();
-applyNow(); requestAnimationFrame(frame);
+let scT; const onScr = () => { if (!R.classList.contains("scrolling")) R.classList.add("scrolling"); clearTimeout(scT); scT = setTimeout(() => R.classList.remove("scrolling"), 220); };
+window.addEventListener("scroll", onScr, {capture: true, passive: true}); window.addEventListener("wheel", onScr, {capture: true, passive: true});
+window.addEventListener("touchmove", () => { if (!dragging) onScr(); }, {capture: true, passive: true});
+applyNow();
 })();
 </script>
 </body>
